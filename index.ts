@@ -1,7 +1,8 @@
 import express from "express";
+import { Application } from "express";
 import {testRouter} from "./routers/test";
 
-const app = express();
+const app  = express();
 
 app.use('/test', testRouter);
 
