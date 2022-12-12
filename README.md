@@ -1,2 +1,1 @@
-bla bla
-testuję Czy działa :) (Przekol)
+Zamieszczony w głównym katalogu plik users.sql należy zaimportować lokalnie do katalogu głównego localhost. Jeśli nic nie będziemy zmieniać w nazwach bazy danych i tabel wszystko powinno działać poprawnie. Zalecany sposób importowania przez przeglądarkę http://localhost/phpmyadmin/. Robimy import i wybieramy plik.
