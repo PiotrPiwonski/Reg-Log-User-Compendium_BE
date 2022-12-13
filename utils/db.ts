@@ -4,7 +4,7 @@ export const pool = createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'warsaw_team_users',
+    database: 'warsaw_team_reg_log_user_compendium',
     namedPlaceholders: true,
     decimalNumbers: true,
 })

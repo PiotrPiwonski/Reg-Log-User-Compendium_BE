@@ -15,7 +15,7 @@
 
 -- Zrzut struktury bazy danych warsaw_team_users
 CREATE DATABASE IF NOT EXISTS `warsaw_team_users` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
-USE `warsaw_team_users`;
+USE `warsaw_team_reg_log_user_compendium`;
 
 -- Zrzut struktury tabela warsaw_team_users.user
 CREATE TABLE IF NOT EXISTS `user` (
