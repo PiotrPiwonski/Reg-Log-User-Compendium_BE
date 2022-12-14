@@ -1,10 +1,10 @@
-import {createPool} from "mysql2/promise";
+import { createPool } from "mysql2/promise";
 
 export const pool = createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'warsaw_team_reg_log_user_compendium',
-    namedPlaceholders: true,
-    decimalNumbers: true,
-})
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  namedPlaceholders: true,
+  decimalNumbers: true,
+});
