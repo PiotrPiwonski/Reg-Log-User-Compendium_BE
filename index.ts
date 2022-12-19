@@ -7,6 +7,8 @@ import { handleError } from "./utils/errors";
 
 const app = express();
 
+app.use(express.json());
+
 app.use("/test", testRouter);
 app.use("/user", userRouter);
 
