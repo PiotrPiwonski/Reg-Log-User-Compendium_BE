@@ -1,3 +1,7 @@
+import {UserEntity} from "./user-entity";
+
+export type CreateUserReq = Omit<UserEntity, 'id' | 'role'>;
+
 export interface UserLoginData {
     id?: string;
     email: string;
