@@ -1,11 +1,14 @@
-import { Router, Request } from "express";
-import { UserLoginData, UserRegistrationData } from "../types";
+import {Request, Router} from "express";
+import { Role } from "../types";
+import {UserRecord} from "../records/user.record";
+import {ValidationError} from "../utils/errors";
+import {UserData} from "../types";
 
 export const userRouter = Router();
 
 userRouter.post(
   "/login",
-  (req: Request<{}, string, UserLoginData>, res, next) => {
+  (req: Request<{}, string, UserData>, res, next) => {
     const { email, password } = req.body;
 
     res.send("Login route");
@@ -14,9 +17,16 @@ userRouter.post(
 
 userRouter.post(
   "/register",
-  (req: Request<{}, string, UserRegistrationData>, res, next) => {
-    const { name, surname, email, password, repeatPassword } = req.body;
+   async (req: Request<{}, { id: string} , UserData>, res, next) => {
 
-    res.send("Account registration route");
+    if (await UserRecord.getUserByEmail(req.body.email)) {
+           throw new ValidationError('User about this email already exists.')
+    }
+    const newUser = new UserRecord(req.body);
+
+    const id = await newUser.createUser();
+
+
+    res.json({ id });
   }
 );
