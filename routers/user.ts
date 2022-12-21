@@ -6,11 +6,29 @@ import { UserData } from "../types";
 
 export const userRouter = Router();
 
-userRouter.post("/login", (req: Request<{}, string, UserData>, res, next) => {
-  const { email, password } = req.body;
+userRouter.post(
+  "/login",
+  async (
+    req: Request<{}, { user: { id: string; token: string } }, UserData>,
+    res,
+    next
+  ) => {
+    const { email, password } = req.body;
 
-  res.send("Login route");
-});
+    const user = await UserRecord.getUserByEmail(email);
+    if (!user) {
+      //TODO error status:401, message: "Wrong credentials provided"
+    }
+    const isMatched = await bcrypt.compare(password, user.password);
+    if (!isMatched) {
+      //TODO error status:401, message: "Wrong credentials provided"
+    }
+
+    //TODO implementation Login Token
+
+    res.json({ user: { id: user.id, token: "token" } });
+  }
+);
 
 userRouter.post(
   "/register",
