@@ -5,9 +5,8 @@ export enum Role{
 }
 
 export interface UserEntity {
-    id: string;
-    role: Role;
+    id?: string;
+    role?: Role;
     email: string;
     password: string;
-    confirmPassword?: string;
 }
