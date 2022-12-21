@@ -14,6 +14,9 @@ userRouter.post(
     next
   ) => {
     const { email, password } = req.body;
+    if (!email || !password) {
+      throw new Error("Please include email and password.");
+    }
 
     const user = await UserRecord.getUserByEmail(email);
     if (!user) {
@@ -34,6 +37,9 @@ userRouter.post(
   "/register",
   async (req: Request<{}, { id: string }, UserData>, res, next) => {
     const { email, password } = req.body;
+    if (!email || !password) {
+      throw new Error("Please include email and password.");
+    }
     if (await UserRecord.getUserByEmail(email)) {
       throw new ValidationError("User about this email already exists.");
     }
