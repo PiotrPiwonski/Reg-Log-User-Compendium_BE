@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import { testRouter } from "./routers/test";
 import { userRouter } from "./routers/user";
 import { handleError } from "./utils/errors";
 
@@ -9,7 +8,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/test", testRouter);
 app.use("/user", userRouter);
 
 app.use(handleError);
