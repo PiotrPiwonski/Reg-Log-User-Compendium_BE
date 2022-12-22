@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "start:dev": "tsnd src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint {src,test}/**/*.ts --fix"
   },
   "author": "",
   "license": "ISC",
