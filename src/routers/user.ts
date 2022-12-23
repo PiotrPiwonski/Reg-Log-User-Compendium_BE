@@ -1,7 +1,7 @@
 import { Request, Router } from 'express';
 import { UserRecord } from '../records/user.record';
-import { ValidationError } from '../utils/errors';
 import { UserData } from '../types';
+import { ValidationException } from '../exceptions/validation.exception';
 
 export const userRouter = Router();
 
@@ -13,7 +13,7 @@ userRouter.post('/login', (req: Request<unknown, string, UserData>, res, next) =
 
 userRouter.post('/register', async (req: Request<unknown, { id: string }, UserData>, res, next) => {
   if (await UserRecord.getUserByEmail(req.body.email)) {
-    throw new ValidationError('User about this email already exists.');
+    throw new ValidationException('User about this email already exists.');
   }
   const newUser = new UserRecord(req.body);
 
