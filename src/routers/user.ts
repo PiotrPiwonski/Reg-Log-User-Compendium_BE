@@ -1,7 +1,7 @@
 import { Request, Router } from 'express';
 import { UserRecord } from '../records/user.record';
 import { UserData } from '../types';
-import { ValidationException } from '../exceptions/validation.exception';
+import { ValidationException } from '../exceptions';
 
 export const userRouter = Router();
 

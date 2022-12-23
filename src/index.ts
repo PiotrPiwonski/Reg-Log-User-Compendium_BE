@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import { userRouter } from './routers/user';
-import { errorMiddleware } from './middleware/errors.middleware';
+import { errorMiddleware } from './middleware';
 
 const app = express();
 

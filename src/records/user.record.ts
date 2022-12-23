@@ -2,7 +2,7 @@ import { Role, UserEntity } from '../types';
 import { v4 as uuid } from 'uuid';
 import { pool } from '../utils/db';
 import { FieldPacket } from 'mysql2';
-import { ValidationException } from '../exceptions/validation.exception';
+import { ValidationException } from '../exceptions';
 
 type UserRecordResults = [UserRecord[], FieldPacket[]];
 
