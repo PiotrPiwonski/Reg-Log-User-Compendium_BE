@@ -13,7 +13,7 @@ export class UserRecord implements UserEntity {
   public password: string;
 
   constructor(obj: UserEntity) {
-    if (!obj.email || obj.email.length < 5 || obj.email.length > 345) {
+    if (!obj.email || obj.email.length < 5 || obj.email.length > 255) {
       throw new ValidationException('Email must not be blank and the number of characters must be between 5 and 255.');
     }
     if (!obj.password || obj.password.length < 6 || obj.password.length > 16) {
