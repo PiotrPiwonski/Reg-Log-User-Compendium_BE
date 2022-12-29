@@ -26,11 +26,7 @@ export type UserLoginReq = {
   password: string;
 };
 
-export type UserRegisterReq = {
-  email: string;
-  password: string;
-  password2: string;
-};
+export type UserRegisterReq = UserLoginReq;
 
 // User Responses
 
