@@ -16,10 +16,8 @@ export class UserRecord implements UserEntity {
     if (!obj.email || obj.email.length < 5 || obj.email.length > 255) {
       throw new ValidationException('Email must not be blank and the number of characters must be between 5 and 255.');
     }
-    if (!obj.password || obj.password.length < 6 || obj.password.length > 16) {
-      throw new ValidationException(
-        'Password must not be blank and the number of characters must be between 6 and 16.',
-      );
+    if (!obj.password || obj.password.length !== 60) {
+      throw new ValidationException('Password must not be blank.');
     }
 
     this.id = obj.id;
