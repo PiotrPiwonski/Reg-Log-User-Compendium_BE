@@ -1,14 +1,14 @@
-import { Role, UserEntity } from '../types';
 import { v4 as uuid } from 'uuid';
 import { pool } from '../utils/db';
 import { FieldPacket } from 'mysql2';
 import { ValidationException } from '../exceptions';
+import { UserRole, UserEntity, UserCreatedInDb } from '../types';
 
 type UserRecordResults = [UserRecord[], FieldPacket[]];
 
 export class UserRecord implements UserEntity {
   public id?: string;
-  public role?: Role;
+  public role?: UserRole;
   public email: string;
   public password: string;
 
@@ -33,12 +33,13 @@ export class UserRecord implements UserEntity {
     return results.length === 0 ? null : new UserRecord(results[0]);
   }
 
-  async createUser(): Promise<string> {
+  async createUser(): Promise<UserCreatedInDb> {
     if (!this.id) {
       this.id = uuid();
     }
+
     if (!this.role) {
-      this.role = Role.User;
+      this.role = UserRole.User;
     }
 
     await pool.execute('INSERT INTO `user` VALUES(:id, :email, :password, :role )', {
@@ -47,6 +48,13 @@ export class UserRecord implements UserEntity {
       password: this.password,
       role: this.role,
     });
-    return this.id;
+
+    const registeredUser = {
+      id: this.id,
+      email: this.email,
+      role: this.role,
+    };
+
+    return registeredUser;
   }
 }
