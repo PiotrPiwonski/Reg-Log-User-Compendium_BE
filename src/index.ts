@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
+import 'express-async-errors';
 import { userRouter } from './routers/user';
 import { errorMiddleware } from './middleware';
 
