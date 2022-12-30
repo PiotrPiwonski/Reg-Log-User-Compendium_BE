@@ -13,12 +13,6 @@ export type UserEntity = {
   password: string;
 };
 
-export type UserCreatedInDb = {
-  id: string;
-  role: UserRole;
-  email: string;
-};
-
 // User Requests
 
 export type UserLoginReq = {
