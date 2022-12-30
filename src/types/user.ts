@@ -34,7 +34,6 @@ export type UserLoginRes = {
   id: string;
   role: UserRole;
   email: string;
-  token: string;
 };
 
 export type UserRegisterRes = UserLoginRes;
