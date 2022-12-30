@@ -29,7 +29,7 @@ userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginRe
     role: user.role,
   };
 
-  res.json(loggedUser);
+  res.status(200).json(loggedUser);
 });
 
 userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserRegisterReq>, res, next) => {
@@ -51,5 +51,5 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   // We cast type here, because we know that newUser instance will
   // definitely have id after running method createUser()
 
-  res.json(newUser as UserRegisterRes);
+  res.status(201).json(newUser as UserRegisterRes);
 });
