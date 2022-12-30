@@ -46,11 +46,11 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = new UserRecord({ email, password: hashedPassword });
-  const createdUser = await newUser.createUser();
+  await newUser.createUser();
+  delete newUser.password;
 
-  //TODO implementation Register Token
+  // We cast type here, because we know that newUser instance will
+  // definitely have id after running method createUser()
 
-  const registeredUser = { ...createdUser, token: 'token' };
-
-  res.json(registeredUser);
+  res.json(newUser as UserRegisterRes);
 });

@@ -33,7 +33,7 @@ export class UserRecord implements UserEntity {
     return results.length === 0 ? null : new UserRecord(results[0]);
   }
 
-  async createUser(): Promise<UserCreatedInDb> {
+  async createUser(): Promise<void> {
     if (!this.id) {
       this.id = uuid();
     }
@@ -48,13 +48,5 @@ export class UserRecord implements UserEntity {
       password: this.password,
       role: this.role,
     });
-
-    const registeredUser = {
-      id: this.id,
-      email: this.email,
-      role: this.role,
-    };
-
-    return registeredUser;
   }
 }
