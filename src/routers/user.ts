@@ -36,7 +36,7 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new Error('Please include email and password.');
+    throw new HttpException(400, 'Please include email and password.');
   }
 
   if (await UserRecord.getUserByEmail(email)) {
