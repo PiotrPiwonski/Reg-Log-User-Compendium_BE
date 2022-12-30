@@ -27,7 +27,6 @@ userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginRe
     id: user.id,
     email: user.email,
     role: user.role,
-    token: 'token',
   };
 
   res.json(loggedUser);
