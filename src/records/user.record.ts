@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { pool } from '../utils/db';
 import { FieldPacket } from 'mysql2';
 import { ValidationException } from '../exceptions';
-import { UserRole, UserEntity, UserCreatedInDb } from '../types';
+import { UserRole, UserEntity } from '../types';
 
 type UserRecordResults = [UserRecord[], FieldPacket[]];
 
