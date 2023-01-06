@@ -11,15 +11,22 @@ export interface RequestWithUser extends Request {
 
 export const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const cookies = req.cookies;
+
   if (cookies && cookies.Authorization) {
     const secret = process.env.JWT_SECRET_KEY;
-    const verificationRes = verify(cookies.Authorization, secret) as DataStoredInToken;
-    const user = await UserRecord.getUserById(verificationRes.id);
-    if (!user) {
+
+    try {
+      const verificationRes = verify(cookies.Authorization, secret) as DataStoredInToken;
+      const user = await UserRecord.getUserById(verificationRes.id);
+      console.log({ verificationRes, user });
+      if (!user) {
+        next(new WrongAuthenticationTokenException());
+      }
+      req.user = user;
+      next();
+    } catch (e) {
       next(new WrongAuthenticationTokenException());
     }
-    req.user = user;
-    next();
   } else {
     next(new AuthenticationTokenMissingException());
   }
