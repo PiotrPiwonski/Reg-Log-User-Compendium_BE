@@ -5,7 +5,7 @@ export interface TokenData {
   token: string;
   expiresIn: number;
 }
-interface DataStoredInToken {
+export interface DataStoredInToken {
   id: string;
   email: string;
 }
