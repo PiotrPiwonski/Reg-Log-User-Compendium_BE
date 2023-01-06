@@ -1,10 +1,11 @@
-import { Request, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserRecord } from '../records/user.record';
 import { UserLoginReq, UserRegisterReq, UserRegisterRes } from '../types';
 import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
 import { createToken } from '../auth/token';
 import { createAuthorizationCookie } from '../utils/cookie';
+import { authMiddleware, RequestWithUser } from '../middleware/auth.middleware';
 
 export const userRouter = Router();
 
@@ -51,4 +52,11 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   // definitely have id after running method createUser()
 
   res.status(201).json(newUser as UserRegisterRes);
+});
+
+userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const loggedInUser = req.user;
+  delete loggedInUser.password;
+
+  res.status(200).json({ user: loggedInUser });
 });
