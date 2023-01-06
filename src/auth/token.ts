@@ -1,7 +1,7 @@
 import { UserEntity } from '../types';
 import { sign } from 'jsonwebtoken';
 
-interface TokenData {
+export interface TokenData {
   token: string;
   expiresIn: number;
 }
