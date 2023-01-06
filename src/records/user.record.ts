@@ -11,6 +11,7 @@ export class UserRecord implements UserEntity {
   public role?: UserRole;
   public email: string;
   public password: string;
+  public currentToken?: string | null;
 
   constructor(obj: UserEntity) {
     if (!obj.email || obj.email.length < 5 || obj.email.length > 255) {
@@ -24,6 +25,7 @@ export class UserRecord implements UserEntity {
     this.role = obj.role;
     this.email = obj.email;
     this.password = obj.password;
+    this.currentToken = obj.currentToken;
   }
 
   static async getUserByEmail(email: string): Promise<UserRecord | null> {
@@ -40,6 +42,13 @@ export class UserRecord implements UserEntity {
     return results.length === 0 ? null : new UserRecord(results[0]);
   }
 
+  static async getUserWithToken(currentToken: string): Promise<UserRecord | null> {
+    const [results] = (await pool.execute('SELECT * FROM `user` WHERE `currentToken` = :currentToken', {
+      currentToken,
+    })) as UserRecordResults;
+    return results.length === 0 ? null : new UserRecord(results[0]);
+  }
+
   async createUser(): Promise<void> {
     if (!this.id) {
       this.id = uuid();
@@ -49,11 +58,16 @@ export class UserRecord implements UserEntity {
       this.role = UserRole.User;
     }
 
-    await pool.execute('INSERT INTO `user` VALUES(:id, :email, :password, :role )', {
+    if (!this.currentToken) {
+      this.currentToken = null;
+    }
+
+    await pool.execute('INSERT INTO `user` VALUES(:id, :email, :password, :role, :currentToken )', {
       id: this.id,
       email: this.email,
       password: this.password,
       role: this.role,
+      currentToken: this.currentToken,
     });
   }
 }
