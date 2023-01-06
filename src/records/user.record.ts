@@ -33,6 +33,13 @@ export class UserRecord implements UserEntity {
     return results.length === 0 ? null : new UserRecord(results[0]);
   }
 
+  static async getUserById(id: string): Promise<UserRecord | null> {
+    const [results] = (await pool.execute('SELECT * FROM `user` WHERE `id` = :id', {
+      id,
+    })) as UserRecordResults;
+    return results.length === 0 ? null : new UserRecord(results[0]);
+  }
+
   async createUser(): Promise<void> {
     if (!this.id) {
       this.id = uuid();
