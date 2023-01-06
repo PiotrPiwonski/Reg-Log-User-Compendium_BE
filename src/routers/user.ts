@@ -1,15 +1,12 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Request, Router } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserRecord } from '../records/user.record';
-import { UserLoginReq, UserRegisterReq, UserRegisterRes } from '../types';
+import { UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
 import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
-import { createToken } from '../auth/token';
-import { createAuthorizationCookie } from '../utils/cookie';
-import { authMiddleware, RequestWithUser } from '../middleware/auth.middleware';
 
 export const userRouter = Router();
 
-userRouter.post('/login', async (req: Request<unknown, { success: boolean }, UserLoginReq>, res, next) => {
+userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginReq>, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new HttpException(400, 'Please include email and password.');
@@ -24,12 +21,15 @@ userRouter.post('/login', async (req: Request<unknown, { success: boolean }, Use
     throw new WrongCredentialsException();
   }
 
-  const tokenData = createToken(user);
+  //TODO implementation Login Token
 
-  res
-    .setHeader('Set-Cookie', [createAuthorizationCookie(tokenData)])
-    .status(200)
-    .json({ success: true });
+  const loggedUser = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  res.status(200).json(loggedUser);
 });
 
 userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserRegisterReq>, res, next) => {
@@ -52,11 +52,4 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   // definitely have id after running method createUser()
 
   res.status(201).json(newUser as UserRegisterRes);
-});
-
-userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const loggedInUser = req.user;
-  delete loggedInUser.password;
-
-  res.status(200).json({ user: loggedInUser });
 });
