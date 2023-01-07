@@ -1,25 +1,22 @@
-import { UserEntity } from '../types';
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { UserRecord } from '../records/user.record';
 export interface TokenData {
-  token: string;
+  accessToken: string;
   expiresIn: number;
 }
-export interface DataStoredInToken {
+export interface JwtPayload {
   id: string;
-  email: string;
 }
-export const createToken = (user: UserEntity): TokenData => {
+export const createAccessToken = (currentToken: string): TokenData => {
   const expiresIn = 60 * 60;
-  const secret = process.env.JWT_SECRET_KEY;
-  const dataStoredInToken: DataStoredInToken = {
-    id: user.id,
-    email: user.email,
+  const jwtSecretKey = process.env.JWT_SECRET_KEY;
+  const payload: JwtPayload = {
+    id: currentToken,
   };
   return {
     expiresIn,
-    token: sign(dataStoredInToken, secret, { expiresIn }),
+    accessToken: sign(payload, jwtSecretKey, { expiresIn }),
   };
 };
 
