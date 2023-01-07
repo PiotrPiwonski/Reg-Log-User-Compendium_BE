@@ -1,15 +1,14 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserRecord } from '../records/user.record';
-import { UserLoginReq, UserRegisterReq, UserRegisterRes } from '../types';
+import { RequestWithUser, UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
 import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
-import { createToken } from '../auth/token';
-import { createAuthorizationCookie } from '../utils/cookie';
-import { authMiddleware, RequestWithUser } from '../middleware/auth.middleware';
+import { createAccessToken, generateCurrentToken, createAuthorizationCookie } from '../auth/token';
+import { authMiddleware } from '../middleware';
 
 export const userRouter = Router();
 
-userRouter.post('/login', async (req: Request<unknown, { success: boolean }, UserLoginReq>, res, next) => {
+userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginReq>, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new HttpException(400, 'Please include email and password.');
@@ -24,12 +23,15 @@ userRouter.post('/login', async (req: Request<unknown, { success: boolean }, Use
     throw new WrongCredentialsException();
   }
 
-  const tokenData = createToken(user);
+  const accessToken = await createAccessToken(await generateCurrentToken(user));
+
+  delete user.password;
+  delete user.currentToken;
 
   res
-    .setHeader('Set-Cookie', [createAuthorizationCookie(tokenData)])
+    .setHeader('Set-Cookie', [createAuthorizationCookie(accessToken)])
     .status(200)
-    .json({ success: true });
+    .json(user as UserLoginRes);
 });
 
 userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserRegisterReq>, res, next) => {
