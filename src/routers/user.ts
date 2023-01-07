@@ -56,6 +56,13 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   res.status(201).json(newUser as UserRegisterRes);
 });
 
+userRouter.get('/logout', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const loggedInUser = req.user;
+  loggedInUser.currentToken = null;
+  await loggedInUser.update();
+  res.setHeader('Set-Cookie', ['Authorization=;Max-age=0']).status(204);
+});
+
 userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const loggedInUser = req.user;
   delete loggedInUser.password;
