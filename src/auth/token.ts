@@ -27,3 +27,7 @@ export const generateCurrentToken = async (user: UserRecord): Promise<string> =>
   await user.update();
   return currentToken;
 };
+
+export const createAuthorizationCookie = (tokenData: TokenData) => {
+  return `Authorization=${tokenData.accessToken}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+};
