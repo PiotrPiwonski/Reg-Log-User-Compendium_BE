@@ -1,13 +1,8 @@
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { UserRecord } from '../records/user.record';
-export interface TokenData {
-  accessToken: string;
-  expiresIn: number;
-}
-export interface JwtPayload {
-  id: string;
-}
+import { JwtPayload, TokenData } from '../types';
+
 export const createAccessToken = (currentToken: string): TokenData => {
   const expiresIn = 60 * 60;
   const jwtSecretKey = process.env.JWT_SECRET_KEY;
