@@ -60,7 +60,7 @@ userRouter.get('/logout', authMiddleware, async (req: RequestWithUser, res: Resp
   const loggedInUser = req.user;
   loggedInUser.currentToken = null;
   await loggedInUser.update();
-  res.setHeader('Set-Cookie', ['Authorization=;Max-age=0']).status(204);
+  res.setHeader('Set-Cookie', ['Authorization=;Max-age=0']).send(204);
 });
 
 userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
