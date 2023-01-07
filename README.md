@@ -1,4 +1,10 @@
-Zamieszczony w głównym katalogu plik users.sql należy zaimportować lokalnie do katalogu głównego localhost. Jeśli nic nie będziemy zmieniać w nazwach bazy danych i tabel wszystko powinno działać poprawnie. Zalecany sposób importowania przez przeglądarkę http://localhost/phpmyadmin/. Robimy import i wybieramy plik.
+#### Baza danych
+Aby zaimportować bazę danych przy pomocy [phpMyAdmin](http://localhost/phpmyadmin), należy wykonać następujące kroki:
+1. Otwórz **phpMyAdmin** i połącz się z serwerem bazy danych, do którego chcesz zaimportować bazę danych.
+2. Kliknij na nazwę bazy danych (utwórz ją wcześniej, jeśli jeszcze jej nie ma) w lewym menu i wybierz opcję "Import" w górnym menu.
+3. W sekcji "Plik do importu" kliknij przycisk "Wybierz plik" i wybierz plik z bazą danych, którą chcesz zaimportować. Plik znajdziesz w katalogu **sql**.
+4. Na samym dole kliknij przycisk "Import".
+5. Baza danych powinna zostać zaimportowana. Wszelkie problemy proszę zgłaszać na bieżąco.
 
 #### Zmienne środowiskowe
 Aby skonfigurować zmienne środowiskowe w swoim projekcie, należy wykonać następujące kroki:
