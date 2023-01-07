@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { UserEntity } from './user';
+import { UserRecord } from '../records/user.record';
 
 export interface JwtPayload {
   id: string;
@@ -9,5 +9,5 @@ export interface TokenData {
   expiresIn: number;
 }
 export interface RequestWithUser extends Request {
-  user: UserEntity;
+  user: UserRecord;
 }
