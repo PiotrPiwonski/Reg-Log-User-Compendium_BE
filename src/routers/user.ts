@@ -66,6 +66,7 @@ userRouter.get('/logout', authMiddleware, async (req: RequestWithUser, res: Resp
 userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const loggedInUser = req.user;
   delete loggedInUser.password;
+  delete loggedInUser.currentToken;
 
   res.status(200).json({ user: loggedInUser });
 });
