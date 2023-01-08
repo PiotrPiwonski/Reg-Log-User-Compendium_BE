@@ -56,7 +56,7 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   res.status(201).json(newUser as UserRegisterRes);
 });
 
-userRouter.get('/logout', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
+userRouter.post('/logout', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const loggedInUser = req.user;
   loggedInUser.currentToken = null;
   await loggedInUser.update();
