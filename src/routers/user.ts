@@ -1,10 +1,8 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Request, Router } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserRecord } from '../records/user.record';
-import { RequestWithUser, UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
+import { UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
 import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
-import { createAccessToken, generateCurrentToken, createAuthorizationCookie } from '../auth/token';
-import { authMiddleware } from '../middleware';
 
 export const userRouter = Router();
 
@@ -23,15 +21,15 @@ userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginRe
     throw new WrongCredentialsException();
   }
 
-  const accessToken = await createAccessToken(await generateCurrentToken(user));
+  //TODO implementation Login Token
 
-  delete user.password;
-  delete user.currentToken;
+  const loggedUser = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
 
-  res
-    .setHeader('Set-Cookie', [createAuthorizationCookie(accessToken)])
-    .status(200)
-    .json(user as UserLoginRes);
+  res.status(200).json(loggedUser);
 });
 
 userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserRegisterReq>, res, next) => {
@@ -54,19 +52,4 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   // definitely have id after running method createUser()
 
   res.status(201).json(newUser as UserRegisterRes);
-});
-
-userRouter.get('/logout', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const loggedInUser = req.user;
-  loggedInUser.currentToken = null;
-  await loggedInUser.update();
-  res.setHeader('Set-Cookie', ['Authorization=;Max-age=0']).send(204);
-});
-
-userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const loggedInUser = req.user;
-  delete loggedInUser.password;
-  delete loggedInUser.currentToken;
-
-  res.status(200).json({ user: loggedInUser });
 });
