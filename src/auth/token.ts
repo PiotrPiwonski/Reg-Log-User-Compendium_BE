@@ -1,5 +1,6 @@
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
+import * as bcrypt from 'bcrypt';
 import { UserRecord } from '../records/user.record';
 import { JwtPayload, TokenData } from '../types';
 import { HttpException } from '../exceptions';
@@ -22,13 +23,19 @@ export const createAccessToken = (currentToken: string): TokenData => {
 };
 
 export const generateCurrentToken = async (user: UserRecord): Promise<string> => {
+  let token: string | null;
   let currentToken: string | null = null;
   let userWithThisToken: UserRecord | null = null;
+  let isMatched = false;
 
   do {
-    currentToken = uuid();
+    token = uuid();
+    currentToken = await bcrypt.hash(token, 10);
     userWithThisToken = await UserRecord.getUserWithToken(currentToken);
-  } while (!!userWithThisToken);
+    if (userWithThisToken) {
+      isMatched = await bcrypt.compare(token, userWithThisToken.currentToken);
+    }
+  } while (!!userWithThisToken && !!isMatched);
   user.currentToken = currentToken;
   await user.update();
   return currentToken;
