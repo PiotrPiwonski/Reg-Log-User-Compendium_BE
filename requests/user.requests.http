@@ -22,3 +22,7 @@ GET http://localhost:3001/user/profile
 Cookie: Authorization=<ACCESS_TOKEN>
 
 # Note: The <ACCESS_TOKEN> placeholder should be replaced with the actual access token received during the login process and stored in a cookie.
+
+
+### Logout as an existing user
+POST http://localhost:3001/user/logout
