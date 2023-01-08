@@ -11,3 +11,6 @@ export interface TokenData {
 export interface RequestWithUser extends Request {
   user: UserRecord;
 }
+export enum CookiesNames {
+  AUTHORIZATION = 'Authorization',
+}
