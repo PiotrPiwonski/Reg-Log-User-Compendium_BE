@@ -23,7 +23,7 @@ userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginRe
     throw new WrongCredentialsException();
   }
 
-  const accessTokenData = await createAccessToken(await generateCurrentToken(user));
+  const accessTokenData = createAccessToken(await generateCurrentToken(user));
 
   delete user.password;
   delete user.currentToken;
@@ -54,6 +54,7 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
   delete newUser.password;
+  delete newUser.currentToken;
 
   // We cast type here, because we know that newUser instance will
   // definitely have id after running method createUser()

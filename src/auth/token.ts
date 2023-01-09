@@ -23,8 +23,8 @@ export const createAccessToken = (currentToken: string): TokenData => {
 };
 
 export const generateCurrentToken = async (user: UserRecord): Promise<string> => {
-  let token: string | null;
-  let currentToken: string | null = null;
+  let token: string;
+  let currentToken: string;
   let userWithThisToken: UserRecord | null = null;
   let isMatched = false;
 

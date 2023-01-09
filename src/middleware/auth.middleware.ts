@@ -9,9 +9,8 @@ export const authMiddleware = async (req: RequestWithUser, res: Response, next: 
   const cookies = req.cookies;
 
   if (cookies && cookies.Authorization) {
-    const jwtSecretKey = process.env.JWT_SECRET_KEY;
-
     try {
+      const jwtSecretKey = process.env.JWT_SECRET_KEY;
       const verificationRes = verify(cookies.Authorization, jwtSecretKey) as JwtPayload;
       const user = await UserRecord.getUserWithToken(verificationRes.id);
 
