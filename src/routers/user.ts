@@ -23,7 +23,7 @@ userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginRe
     throw new WrongCredentialsException();
   }
 
-  const accessTokenData = createAccessToken(await generateCurrentToken(user));
+  const accessTokenData = createAccessToken(await generateCurrentToken(user), user.id);
 
   delete user.password;
   delete user.currentToken;

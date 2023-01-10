@@ -3,6 +3,7 @@ import { UserRecord } from '../records/user.record';
 
 export interface JwtPayload {
   id: string;
+  token: string;
 }
 export interface TokenData {
   accessToken: string;
