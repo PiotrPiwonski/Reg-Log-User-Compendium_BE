@@ -11,6 +11,7 @@ export type UserEntity = {
   role?: UserRole;
   email: string;
   password: string;
+  currentToken?: string | null;
 };
 
 // User Requests
