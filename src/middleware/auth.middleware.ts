@@ -12,7 +12,6 @@ export const authMiddleware = async (req: RequestWithUser, res: Response, next: 
     try {
       const jwtSecretKey = process.env.JWT_SECRET_KEY;
       const verificationRes = verify(cookies.Authorization, jwtSecretKey) as JwtPayload;
-      console.log({ verificationRes });
       const user = await UserRecord.getUserById(verificationRes.id);
       if (!user) {
         next(new WrongAuthenticationTokenException());
