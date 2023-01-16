@@ -34,9 +34,6 @@ export const login = async (
 
   const accessTokenData = createAccessToken(await generateCurrentToken(user), user.id);
 
-  delete user.password;
-  delete user.currentToken;
-
   res
     .cookie(CookiesNames.AUTHORIZATION, accessTokenData.accessToken, {
       maxAge: accessTokenData.expiresIn * 1000, // Example: JWT_ACCESS_TOKEN_EXPIRATION_TIME=3600 => Expires in 1 hour (3600 seconds * 1000 milliseconds).
