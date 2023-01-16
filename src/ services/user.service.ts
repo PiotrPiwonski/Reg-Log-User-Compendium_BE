@@ -12,6 +12,7 @@ import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredential
 import { UserRecord } from '../records/user.record';
 import { createAccessToken, generateCurrentToken } from '../auth/token';
 import { checkHash, hashData } from '../utils/hash';
+import { clearCookie, setCookie } from '../utils/cookies';
 
 export const login = async (
   req: Request<unknown, UserLoginRes, UserLoginReq>,
@@ -34,15 +35,9 @@ export const login = async (
 
   const accessTokenData = createAccessToken(await generateCurrentToken(user), user.id);
 
-  res
-    .cookie(CookiesNames.AUTHORIZATION, accessTokenData.accessToken, {
-      maxAge: accessTokenData.expiresIn * 1000, // Example: JWT_ACCESS_TOKEN_EXPIRATION_TIME=3600 => Expires in 1 hour (3600 seconds * 1000 milliseconds).
-      secure: false,
-      domain: 'localhost',
-      httpOnly: true,
-    })
-    .status(200)
-    .json(cleanUserData(user) as UserLoginRes);
+  setCookie(res, CookiesNames.AUTHORIZATION, accessTokenData);
+
+  res.status(200).json(cleanUserData(user) as UserLoginRes);
 };
 
 export const register = async (
@@ -64,9 +59,6 @@ export const register = async (
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
 
-  // We cast type here, because we know that newUser instance will
-  // definitely have id after running method createUser()
-
   res.status(201).json(cleanUserData(newUser) as UserRegisterRes);
 };
 
@@ -74,15 +66,9 @@ export const logout = async (req: RequestWithUser, res: Response<{ ok: boolean }
   const loggedInUser = req.user;
   loggedInUser.currentToken = null;
   await loggedInUser.update();
-  res
-    .status(200)
-    .clearCookie(CookiesNames.AUTHORIZATION, {
-      maxAge: 0,
-      secure: false,
-      domain: 'localhost',
-      httpOnly: true,
-    })
-    .json({ ok: true });
+
+  clearCookie(res, CookiesNames.AUTHORIZATION);
+  res.status(200).json({ ok: true });
 };
 export const profile = async (req: RequestWithUser, res: Response<UserEntity>, next: NextFunction) => {
   const loggedInUser = req.user;
