@@ -10,8 +10,8 @@ import {
 import { NextFunction, Request, Response } from 'express';
 import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
 import { UserRecord } from '../records/user.record';
-import * as bcrypt from 'bcrypt';
 import { createAccessToken, generateCurrentToken } from '../auth/token';
+import { checkHash, hashData } from '../utils/hash';
 
 export const login = async (
   req: Request<unknown, UserLoginRes, UserLoginReq>,
@@ -27,7 +27,7 @@ export const login = async (
   if (!user) {
     throw new WrongCredentialsException();
   }
-  const isMatched = await bcrypt.compare(password, user.password);
+  const isMatched = await checkHash(password, user.password);
   if (!isMatched) {
     throw new WrongCredentialsException();
   }
@@ -63,7 +63,7 @@ export const register = async (
     throw new UserWithThatEmailAlreadyExistsException(email);
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashData(password);
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
 
