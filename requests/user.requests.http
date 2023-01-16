@@ -1,28 +1,5 @@
-### Create a new user
-POST http://localhost:3001/user/register
-Content-Type: application/json
-
-{
-  "email": "daniel@gmail.com",
-  "password": "12345678911"
-}
-
-### Sign in as an existing user
-POST http://localhost:3001/user/login
-Content-Type: application/json
-
-{
-  "email": "daniel@gmail.com",
-  "password": "12345678911"
-}
-
-
 ### Get the authenticated user's profile
 GET http://localhost:3001/user/profile
 Cookie: Authorization=<ACCESS_TOKEN>
 
 # Note: The <ACCESS_TOKEN> placeholder should be replaced with the actual access token received during the login process and stored in a cookie.
-
-
-### Logout as an existing user
-POST http://localhost:3001/user/logout

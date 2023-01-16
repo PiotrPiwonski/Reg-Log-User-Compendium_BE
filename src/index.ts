@@ -3,24 +3,21 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
-import { userRouter } from './routers/user';
 import { errorMiddleware } from './middleware';
 import cookieParser from 'cookie-parser';
+import { corsOptions } from './config';
+import { userRoute } from './routes';
+import { authRoute } from './routes';
 
 const app = express();
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    methods: ['POST', 'PUT', 'GET', 'DELETE'],
-    credentials: true,
-  }),
-);
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/user', userRouter);
+app.use('/auth', authRoute);
+app.use('/user', userRoute);
 
 app.use(errorMiddleware);
 

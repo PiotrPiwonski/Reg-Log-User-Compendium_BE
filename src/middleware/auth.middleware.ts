@@ -1,11 +1,19 @@
-import { NextFunction, Response } from 'express';
+import { RequestHandler } from 'express';
 import { verify } from 'jsonwebtoken';
-import * as bcrypt from 'bcrypt';
-import { JwtPayload, RequestWithUser } from '../types';
+import { JwtPayload } from '../types';
 import { UserRecord } from '../records/user.record';
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions';
+import { checkHash } from '../utils';
 
-export const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: UserRecord;
+    }
+  }
+}
+export const authMiddleware: RequestHandler<unknown> = async (req, res, next) => {
   const cookies = req.cookies;
 
   if (cookies && cookies.Authorization) {
@@ -16,7 +24,7 @@ export const authMiddleware = async (req: RequestWithUser, res: Response, next: 
       if (!user) {
         next(new WrongAuthenticationTokenException());
       }
-      const isMatched = await bcrypt.compare(verificationRes.token, user.currentToken);
+      const isMatched = await checkHash(verificationRes.token, user.currentToken);
       if (!isMatched) {
         next(new WrongAuthenticationTokenException());
       }

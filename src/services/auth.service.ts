@@ -16,7 +16,7 @@ export const createAccessToken = (currentToken: string, userId: string): TokenDa
     const accessToken = sign(payload, jwtSecretKey, { expiresIn });
     return {
       expiresIn,
-      accessToken,
+      token: accessToken,
     };
   } catch (error) {
     throw new HttpException(error.statusCode, error.message);
