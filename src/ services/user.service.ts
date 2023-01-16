@@ -1,14 +1,23 @@
-import { NextFunction, Request, Response, Router } from 'express';
-import * as bcrypt from 'bcrypt';
-import { UserRecord } from '../records/user.record';
-import { CookiesNames, RequestWithUser, UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
+import {
+  CookiesNames,
+  RequestWithUser,
+  UserEntity,
+  UserLoginReq,
+  UserLoginRes,
+  UserRegisterReq,
+  UserRegisterRes,
+} from '../types';
+import { NextFunction, Request, Response } from 'express';
 import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
+import { UserRecord } from '../records/user.record';
+import * as bcrypt from 'bcrypt';
 import { createAccessToken, generateCurrentToken } from '../auth/token';
-import { authMiddleware } from '../middleware';
 
-export const userRouter = Router();
-
-userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginReq>, res, next) => {
+export const login = async (
+  req: Request<unknown, UserLoginRes, UserLoginReq>,
+  res: Response<UserLoginRes>,
+  next: NextFunction,
+) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new HttpException(400, 'Please include email and password.');
@@ -37,9 +46,13 @@ userRouter.post('/login', async (req: Request<unknown, UserLoginRes, UserLoginRe
     })
     .status(200)
     .json(user as UserLoginRes);
-});
+};
 
-userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserRegisterReq>, res, next) => {
+export const register = async (
+  req: Request<unknown, UserRegisterRes, UserRegisterReq>,
+  res: Response<UserRegisterRes>,
+  next: NextFunction,
+) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -60,27 +73,27 @@ userRouter.post('/register', async (req: Request<unknown, UserRegisterRes, UserR
   // definitely have id after running method createUser()
 
   res.status(201).json(newUser as UserRegisterRes);
-});
+};
 
-userRouter.post('/logout', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const logout = async (req: RequestWithUser, res: Response<{ ok: boolean }>, next: NextFunction) => {
   const loggedInUser = req.user;
   loggedInUser.currentToken = null;
   await loggedInUser.update();
   res
+    .status(200)
     .clearCookie(CookiesNames.AUTHORIZATION, {
       maxAge: 0,
       secure: false,
       domain: 'localhost',
       httpOnly: true,
     })
-    .sendStatus(204);
-});
-
-userRouter.get('/profile', authMiddleware, async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    .json({ ok: true });
+};
+export const profile = async (req: RequestWithUser, res: Response<{ user: UserEntity }>, next: NextFunction) => {
   const loggedInUser = req.user;
 
   delete loggedInUser.password;
   delete loggedInUser.currentToken;
 
   res.status(200).json({ user: loggedInUser });
-});
+};

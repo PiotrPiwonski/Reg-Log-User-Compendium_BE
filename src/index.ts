@@ -3,7 +3,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
-import { userRouter } from './routers/user';
+import { userRouter } from './controllers/user.controller';
 import { errorMiddleware } from './middleware';
 import cookieParser from 'cookie-parser';
 
