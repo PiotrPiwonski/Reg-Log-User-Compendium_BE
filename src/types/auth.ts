@@ -6,7 +6,7 @@ export interface JwtPayload {
   token: string;
 }
 export interface TokenData {
-  accessToken: string;
+  token: string;
   expiresIn: number;
 }
 export interface RequestWithUser extends Request {
