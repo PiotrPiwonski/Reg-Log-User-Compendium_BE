@@ -3,7 +3,7 @@ import { CookiesNames, UserLoginReq, UserLoginRes, UserRegisterReq, UserRegister
 import { checkHash, clearCookie, hashData, setCookie, validateUserData } from '../utils';
 import { UserRecord } from '../records/user.record';
 import { UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
-import { clearUserData } from '../services';
+import { serializeUserData } from '../services';
 import { createAccessToken, generateCurrentToken } from '../services';
 
 export const login: RequestHandler<unknown, UserLoginRes, UserLoginReq> = async (req, res, next) => {
@@ -22,7 +22,7 @@ export const login: RequestHandler<unknown, UserLoginRes, UserLoginReq> = async 
 
   setCookie(res, CookiesNames.AUTHORIZATION, accessTokenData);
 
-  res.status(200).json(clearUserData(user));
+  res.status(200).json(serializeUserData(user));
 };
 
 export const register: RequestHandler<unknown, UserRegisterRes, UserRegisterReq> = async (req, res, next) => {
@@ -36,7 +36,7 @@ export const register: RequestHandler<unknown, UserRegisterRes, UserRegisterReq>
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
 
-  res.status(201).json(clearUserData(newUser));
+  res.status(201).json(serializeUserData(newUser));
 };
 
 export const logout: RequestHandler<unknown, { ok: boolean }> = async (req, res, next) => {
