@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { pool } from '../utils/db';
+import { pool } from '../utils';
 import { FieldPacket } from 'mysql2';
 import { ValidationException } from '../exceptions';
 import { UserRole, UserEntity } from '../types';

@@ -11,9 +11,9 @@ import { NextFunction, Request, Response } from 'express';
 import { UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
 import { UserRecord } from '../records/user.record';
 import { createAccessToken, generateCurrentToken } from '../auth/token';
-import { checkHash, hashData } from '../utils/hash';
-import { clearCookie, setCookie } from '../utils/cookies';
-import { validateUserData } from '../utils/validate';
+import { checkHash, hashData } from '../utils';
+import { clearCookie, setCookie } from '../utils';
+import { validateUserData } from '../utils';
 
 export const login = async (
   req: Request<unknown, UserLoginRes, UserLoginReq>,

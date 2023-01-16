@@ -3,7 +3,7 @@ import { verify } from 'jsonwebtoken';
 import { JwtPayload, RequestWithUser } from '../types';
 import { UserRecord } from '../records/user.record';
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions';
-import { checkHash } from '../utils/hash';
+import { checkHash } from '../utils';
 
 export const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const cookies = req.cookies;
