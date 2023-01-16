@@ -1,6 +1,6 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { RequestHandler } from 'express';
 import { verify } from 'jsonwebtoken';
-import { JwtPayload, UserLoginReq, UserLoginRes } from '../types';
+import { JwtPayload } from '../types';
 import { UserRecord } from '../records/user.record';
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions';
 import { checkHash } from '../utils';
