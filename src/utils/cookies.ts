@@ -1,13 +1,7 @@
 import { Response } from 'express';
 import { CookiesNames, TokenData } from '../types';
 import { CookieOptions } from 'express-serve-static-core';
-
-const cookieOptions: CookieOptions = {
-  maxAge: 0,
-  secure: false,
-  domain: 'localhost',
-  httpOnly: true,
-};
+import { cookieOptions } from '../config';
 
 export const setCookie = (
   res: Response,
