@@ -45,7 +45,7 @@ export const login = async (
       httpOnly: true,
     })
     .status(200)
-    .json(user as UserLoginRes);
+    .json(cleanUserData(user) as UserLoginRes);
 };
 
 export const register = async (
@@ -66,13 +66,11 @@ export const register = async (
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
-  delete newUser.password;
-  delete newUser.currentToken;
 
   // We cast type here, because we know that newUser instance will
   // definitely have id after running method createUser()
 
-  res.status(201).json(newUser as UserRegisterRes);
+  res.status(201).json(cleanUserData(newUser) as UserRegisterRes);
 };
 
 export const logout = async (req: RequestWithUser, res: Response<{ ok: boolean }>, next: NextFunction) => {
@@ -89,11 +87,14 @@ export const logout = async (req: RequestWithUser, res: Response<{ ok: boolean }
     })
     .json({ ok: true });
 };
-export const profile = async (req: RequestWithUser, res: Response<{ user: UserEntity }>, next: NextFunction) => {
+export const profile = async (req: RequestWithUser, res: Response<UserEntity>, next: NextFunction) => {
   const loggedInUser = req.user;
 
-  delete loggedInUser.password;
-  delete loggedInUser.currentToken;
+  res.status(200).json(cleanUserData(loggedInUser));
+};
 
-  res.status(200).json({ user: loggedInUser });
+const cleanUserData = (user: UserEntity) => {
+  delete user.password;
+  delete user.currentToken;
+  return user;
 };
