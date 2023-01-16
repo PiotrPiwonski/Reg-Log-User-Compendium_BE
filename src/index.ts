@@ -3,10 +3,10 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
-import { userRouter } from './controllers/user.controller';
 import { errorMiddleware } from './middleware';
 import cookieParser from 'cookie-parser';
 import { corsOptions } from './config';
+import { userRoute } from './routes/user.route';
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/user', userRouter);
+app.use('/user', userRoute);
 
 app.use(errorMiddleware);
 
