@@ -6,16 +6,11 @@ import 'express-async-errors';
 import { userRouter } from './controllers/user.controller';
 import { errorMiddleware } from './middleware';
 import cookieParser from 'cookie-parser';
+import { corsOptions } from './config';
 
 const app = express();
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    methods: ['POST', 'PUT', 'GET', 'DELETE'],
-    credentials: true,
-  }),
-);
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
