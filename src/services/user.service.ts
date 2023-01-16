@@ -1,13 +1,5 @@
-import {
-  CookiesNames,
-  RequestWithUser,
-  UserEntity,
-  UserLoginReq,
-  UserLoginRes,
-  UserRegisterReq,
-  UserRegisterRes,
-} from '../types';
-import { NextFunction, Request, Response } from 'express';
+import { CookiesNames, UserEntity, UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
+import { RequestHandler } from 'express';
 import { UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
 import { UserRecord } from '../records/user.record';
 import { createAccessToken, generateCurrentToken } from '../auth/token';
@@ -15,11 +7,7 @@ import { checkHash, hashData } from '../utils';
 import { clearCookie, setCookie } from '../utils';
 import { validateUserData } from '../utils';
 
-export const login = async (
-  req: Request<unknown, UserLoginRes, UserLoginReq>,
-  res: Response<UserLoginRes>,
-  next: NextFunction,
-) => {
+export const login: RequestHandler<unknown, UserLoginRes, UserLoginReq> = async (req, res, next) => {
   const { email, password } = validateUserData(req);
 
   const user = await UserRecord.getUserByEmail(email);
@@ -35,14 +23,10 @@ export const login = async (
 
   setCookie(res, CookiesNames.AUTHORIZATION, accessTokenData);
 
-  res.status(200).json(cleanUserData(user) as UserLoginRes);
+  res.status(200).json(clearUserData(user));
 };
 
-export const register = async (
-  req: Request<unknown, UserRegisterRes, UserRegisterReq>,
-  res: Response<UserRegisterRes>,
-  next: NextFunction,
-) => {
+export const register: RequestHandler<unknown, UserRegisterRes, UserRegisterReq> = async (req, res, next) => {
   const { email, password } = validateUserData(req);
 
   if (await UserRecord.getUserByEmail(email)) {
@@ -53,10 +37,10 @@ export const register = async (
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
 
-  res.status(201).json(cleanUserData(newUser) as UserRegisterRes);
+  res.status(201).json(clearUserData(newUser));
 };
 
-export const logout = async (req: RequestWithUser, res: Response<{ ok: boolean }>, next: NextFunction) => {
+export const logout: RequestHandler<unknown, { ok: boolean }> = async (req, res, next) => {
   const loggedInUser = req.user;
   loggedInUser.currentToken = null;
   await loggedInUser.update();
@@ -64,13 +48,13 @@ export const logout = async (req: RequestWithUser, res: Response<{ ok: boolean }
   clearCookie(res, CookiesNames.AUTHORIZATION);
   res.status(200).json({ ok: true });
 };
-export const profile = async (req: RequestWithUser, res: Response<UserEntity>, next: NextFunction) => {
+export const profile: RequestHandler<unknown, UserEntity> = async (req, res, next) => {
   const loggedInUser = req.user;
 
-  res.status(200).json(cleanUserData(loggedInUser));
+  res.status(200).json(clearUserData(loggedInUser));
 };
 
-const cleanUserData = (user: UserEntity) => {
+const clearUserData = (user: UserEntity) => {
   delete user.password;
   delete user.currentToken;
   return user;
