@@ -8,21 +8,19 @@ import {
   UserRegisterRes,
 } from '../types';
 import { NextFunction, Request, Response } from 'express';
-import { HttpException, UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
+import { UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
 import { UserRecord } from '../records/user.record';
 import { createAccessToken, generateCurrentToken } from '../auth/token';
 import { checkHash, hashData } from '../utils/hash';
 import { clearCookie, setCookie } from '../utils/cookies';
+import { validateUserData } from '../utils/validate';
 
 export const login = async (
   req: Request<unknown, UserLoginRes, UserLoginReq>,
   res: Response<UserLoginRes>,
   next: NextFunction,
 ) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new HttpException(400, 'Please include email and password.');
-  }
+  const { email, password } = validateUserData(req);
 
   const user = await UserRecord.getUserByEmail(email);
   if (!user) {
@@ -45,11 +43,7 @@ export const register = async (
   res: Response<UserRegisterRes>,
   next: NextFunction,
 ) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    throw new HttpException(400, 'Please include email and password.');
-  }
+  const { email, password } = validateUserData(req);
 
   if (await UserRecord.getUserByEmail(email)) {
     throw new UserWithThatEmailAlreadyExistsException(email);
