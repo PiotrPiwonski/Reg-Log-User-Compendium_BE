@@ -1,11 +1,19 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import { JwtPayload, RequestWithUser } from '../types';
+import { JwtPayload, UserLoginReq, UserLoginRes } from '../types';
 import { UserRecord } from '../records/user.record';
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions';
 import { checkHash } from '../utils';
 
-export const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: UserRecord;
+    }
+  }
+}
+export const authMiddleware: RequestHandler<unknown> = async (req, res, next) => {
   const cookies = req.cookies;
 
   if (cookies && cookies.Authorization) {
