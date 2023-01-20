@@ -23,6 +23,20 @@ export const createAccessToken = (currentToken: string, userId: string): TokenDa
   }
 };
 
+export const createRefreshToken = (userId: string): TokenData => {
+  const expiresIn = Number(process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME);
+  const jwtSecretKey = process.env.REFRESH_JWT_SECRET_KEY;
+  try {
+    const refreshToken = sign({ userId }, jwtSecretKey, { expiresIn });
+    return {
+      expiresIn,
+      token: refreshToken,
+    };
+  } catch (error) {
+    throw new HttpException(error.statusCode, error.message);
+  }
+};
+
 export const generateCurrentToken = async (user: UserRecord): Promise<string> => {
   let currentToken: string;
   let currentHashedToken: string;
