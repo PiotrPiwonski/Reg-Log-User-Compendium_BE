@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UserRecord } from '../records/user.record';
 import { JwtPayload, TokenData } from '../types';
 import { HttpException } from '../exceptions';
+import { hashData } from '../utils';
 
 export const createAccessToken = (currentToken: string, userId: string): TokenData => {
   const expiresIn = Number(process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME);
@@ -23,11 +24,18 @@ export const createAccessToken = (currentToken: string, userId: string): TokenDa
   }
 };
 
+export const updateRefreshToken = async (userId: string, token: string): Promise<void> => {
+  const user = await UserRecord.getUserById(userId);
+  user.refreshToken = await hashData(token);
+  await user.update();
+};
+
 export const createRefreshToken = (userId: string): TokenData => {
   const expiresIn = Number(process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME);
   const jwtSecretKey = process.env.REFRESH_JWT_SECRET_KEY;
   try {
     const refreshToken = sign({ userId }, jwtSecretKey, { expiresIn });
+    updateRefreshToken(userId, refreshToken);
     return {
       expiresIn,
       token: refreshToken,
