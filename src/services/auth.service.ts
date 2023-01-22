@@ -53,7 +53,7 @@ export const generateCurrentToken = async (user: UserRecord): Promise<string> =>
 
   do {
     currentToken = uuid();
-    currentHashedToken = await bcrypt.hash(currentToken, 10);
+    currentHashedToken = await hashData(currentToken);
     userWithThisToken = await UserRecord.getUserById(user.id);
     if (userWithThisToken.currentToken) {
       isMatched = await bcrypt.compare(currentToken, userWithThisToken.currentToken);
