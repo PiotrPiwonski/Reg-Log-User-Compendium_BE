@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authMiddleware } from '../middleware';
+import { authMiddleware, refreshMiddleware } from '../middleware';
 import { login, logout, register, refresh } from '../controllers';
 
 export const authRoute = Router();
@@ -11,4 +11,4 @@ authRoute
 
   .post('/logout', authMiddleware, logout)
 
-  .post('/refresh', refresh);
+  .post('/refresh', refreshMiddleware, refresh);
