@@ -12,6 +12,7 @@ export type UserEntity = {
   email: string;
   password: string;
   currentToken?: string | null;
+  refreshToken?: string | null;
 };
 
 // User Requests

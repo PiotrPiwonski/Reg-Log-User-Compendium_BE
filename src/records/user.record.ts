@@ -12,6 +12,7 @@ export class UserRecord implements UserEntity {
   public email: string;
   public password: string;
   public currentToken?: string | null;
+  public refreshToken?: string | null;
 
   constructor(obj: UserEntity) {
     if (!obj.email || obj.email.length < 5 || obj.email.length > 255) {
@@ -26,6 +27,7 @@ export class UserRecord implements UserEntity {
     this.email = obj.email;
     this.password = obj.password;
     this.currentToken = obj.currentToken;
+    this.refreshToken = obj.refreshToken;
   }
 
   static async getUserByEmail(email: string): Promise<UserRecord | null> {
@@ -62,24 +64,30 @@ export class UserRecord implements UserEntity {
       this.currentToken = null;
     }
 
-    await pool.execute('INSERT INTO `user` VALUES(:id, :email, :password, :role, :currentToken )', {
+    if (!this.refreshToken) {
+      this.refreshToken = null;
+    }
+
+    await pool.execute('INSERT INTO `user` VALUES(:id, :email, :password, :role, :currentToken, :refreshToken)', {
       id: this.id,
       email: this.email,
       password: this.password,
       role: this.role,
       currentToken: this.currentToken,
+      refreshToken: this.refreshToken,
     });
   }
 
   async update(): Promise<void> {
     await pool.execute(
-      'UPDATE `user` SET `email` = :email, `password` = :password, `role` = :role, `currentToken` = :currentToken WHERE `id` = :id',
+      'UPDATE `user` SET `email` = :email, `password` = :password, `role` = :role, `currentToken` = :currentToken, `refreshToken` = :refreshToken WHERE `id` = :id',
       {
         id: this.id,
         email: this.email,
         password: this.password,
         role: this.role,
         currentToken: this.currentToken,
+        refreshToken: this.refreshToken,
       },
     );
   }
