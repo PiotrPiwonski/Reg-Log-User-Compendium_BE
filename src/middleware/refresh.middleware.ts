@@ -5,14 +5,6 @@ import { UserRecord } from '../records/user.record';
 import { RefreshTokenMissingException, WrongRefreshTokenException } from '../exceptions';
 import { checkHash } from '../utils';
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Request {
-      user?: UserRecord;
-    }
-  }
-}
 export const refreshMiddleware: RequestHandler<unknown> = async (req, res, next) => {
   const cookies = req.cookies;
   const refreshToken = cookies[CookiesNames.REFRESH];

@@ -5,14 +5,6 @@ import { UserRecord } from '../records/user.record';
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions';
 import { checkHash } from '../utils';
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Request {
-      user?: UserRecord;
-    }
-  }
-}
 export const authMiddleware: RequestHandler<unknown> = async (req, res, next) => {
   const cookies = req.cookies;
 
