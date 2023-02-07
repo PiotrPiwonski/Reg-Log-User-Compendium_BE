@@ -26,6 +26,4 @@ export type UserRegisterReq = UserLoginReq;
 
 // User Responses
 
-export type UserLoginRes = Omit<UserEntity, 'password' | 'currentToken'>;
-
-export type UserRegisterRes = UserLoginRes;
+export type UserResponse = Omit<UserEntity, 'password' | 'currentToken' | 'refreshToken'>;
