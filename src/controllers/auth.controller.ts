@@ -1,11 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import { CookiesNames, UserLoginReq, UserLoginRes, UserRegisterReq, UserRegisterRes } from '../types';
-import { checkHash, clearCookie, hashData, setCookie, validateUserData } from '../utils';
+import { ClientApiResponse, CookiesNames, UserLoginReq, UserRegisterReq, UserResponse } from '../types';
+import { checkHash, clearCookie, hashData, sendResponse, setCookie, validateUserData } from '../utils';
 import { UserRecord } from '../records/user.record';
 import { UserWithThatEmailAlreadyExistsException, WrongCredentialsException } from '../exceptions';
 import { createAccessToken, createRefreshToken, generateCurrentToken, serializeUserData } from '../services';
 
-export const login: RequestHandler<unknown, UserLoginRes, UserLoginReq> = async (req, res, next) => {
+export const login: RequestHandler<unknown, ClientApiResponse<UserResponse>, UserLoginReq> = async (req, res, next) => {
   const { email, password } = validateUserData(req);
 
   const user = await UserRecord.getUserByEmail(email);
@@ -23,10 +23,14 @@ export const login: RequestHandler<unknown, UserLoginRes, UserLoginReq> = async 
   setCookie(res, CookiesNames.AUTHORIZATION, accessTokenData);
   setCookie(res, CookiesNames.REFRESH, refreshTokenData);
 
-  res.status(200).json(serializeUserData(user));
+  sendResponse(res, 200, serializeUserData(user));
 };
 
-export const register: RequestHandler<unknown, UserRegisterRes, UserRegisterReq> = async (req, res, next) => {
+export const register: RequestHandler<unknown, ClientApiResponse<UserResponse>, UserRegisterReq> = async (
+  req,
+  res,
+  next,
+) => {
   const { email, password } = validateUserData(req);
 
   if (await UserRecord.getUserByEmail(email)) {
@@ -37,10 +41,10 @@ export const register: RequestHandler<unknown, UserRegisterRes, UserRegisterReq>
   const newUser = new UserRecord({ email, password: hashedPassword });
   await newUser.createUser();
 
-  res.status(201).json(serializeUserData(newUser));
+  sendResponse(res, 201, serializeUserData(newUser));
 };
 
-export const logout: RequestHandler<unknown, { ok: boolean }> = async (req, res, next) => {
+export const logout: RequestHandler<unknown, ClientApiResponse<null>> = async (req, res, next) => {
   const loggedInUser = req.user;
   loggedInUser.currentToken = null;
   loggedInUser.refreshToken = null;
@@ -48,10 +52,15 @@ export const logout: RequestHandler<unknown, { ok: boolean }> = async (req, res,
 
   clearCookie(res, CookiesNames.AUTHORIZATION);
   clearCookie(res, CookiesNames.REFRESH);
-  res.status(200).json({ ok: true });
+
+  sendResponse(res, 200, null);
 };
 
-export const refresh = async (req: Request, res: Response, next: NextFunction) => {
+export const refresh: RequestHandler<unknown, ClientApiResponse<UserResponse>> = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const user = req.user;
   const currentToken = await generateCurrentToken(user);
   const accessToken = createAccessToken(currentToken, user.id);
@@ -59,5 +68,6 @@ export const refresh = async (req: Request, res: Response, next: NextFunction) =
 
   setCookie(res, CookiesNames.AUTHORIZATION, accessToken);
   setCookie(res, CookiesNames.REFRESH, refreshTokenData);
-  res.status(200).json(serializeUserData(user));
+
+  sendResponse(res, 200, serializeUserData(user));
 };
