@@ -2,7 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { ClientApiResponse } from '../types';
 
-export const errorMiddleware = (err: HttpException, req: Request, res: Response, next: NextFunction): void => {
+export const errorMiddleware = (
+  err: HttpException,
+  req: Request<never, ClientApiResponse<null>, never>,
+  res: Response<ClientApiResponse<null>>,
+  next: NextFunction,
+): void => {
   const status = err.status || 500;
   const message = err.message || 'Something went wrong';
 
@@ -17,5 +22,5 @@ export const errorMiddleware = (err: HttpException, req: Request, res: Response,
     ok: false,
     status,
     error: message,
-  } satisfies ClientApiResponse<null>);
+  });
 };
